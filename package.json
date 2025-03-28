@@ -11,7 +11,9 @@
   "description": "",
   "dependencies": {
     "dotenv": "^16.4.7",
+    "googleapis": "^148.0.0",
     "openai": "^4.90.0",
-    "readline-sync": "^1.4.10"
+    "readline-sync": "^1.4.10",
+    "uuid": "^11.1.0"
   }
 }

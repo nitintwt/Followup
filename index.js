@@ -1,6 +1,7 @@
 import { OpenAI } from "openai";
 import dotenv from "dotenv";
 import readlineSync from 'readline-sync';
+import scheduleEvent from "./services/scheduleMeeting.service";
 
 dotenv.config({ path: "./.env" });
 
@@ -18,7 +19,11 @@ Follow this process strictly:
 3. Contact vendors via email API (mocked in this script).
 4. Collect and extract quotes (price, availability, delivery time, terms).
 5. Compare vendor responses and select the best one.
-6. If a vendor qualifies, ask the user if they want to schedule a meeting or auto-place an order.
+6. If a vendor qualifies, ask the user if they want to schedule a meeting or auto place an order.
+
+Available Tools:
+- function scheduleEvent(vendorEmail:string , vendorName:string , date:string)
+scheduleEvent is a function that schedule meetings with the best vendor
 
 **Strictly return responses in JSON format.**
 
@@ -28,13 +33,17 @@ Valid Responses:
 {"type": "output", "user": "What is your delivery deadline?"}
 {"type": "output", "user": "I am reaching out to vendors for quotes."}
 {"type": "output", "user": "The best vendor is XYZ Ltd. Would you like to schedule a meeting or auto-place the order?"}
-{"type": "action", "function": "scheduleMeeting", "input": {"vendor": "XYZ Ltd", "email": "contact@xyz.com", "date": "2024-04-01"}}
+{"type": "action", "function": "scheduleEvent", "input": {"vendorName": "XYZ Ltd", "vendorEmail": "contact@xyz.com", "date": "2024-04-01"}}
 {"type": "action", "function": "placeOrder", "input": {"vendor": "XYZ Ltd", "product": "Laptops", "quantity": 50, "price": "$500 each"}}
 `;
 
 const messages = [{ role: "system", content: systemPrompt }];
 const userData = { product: null, quantity: null, deadline: null, bestVendor: null };
 
+// providing tools to ai
+const tools = {scheduleEvent}
+
+// auto prompting
 while (true) {
   const query = readlineSync.question('>> ');
   messages.push({ role: "user", content: query });
